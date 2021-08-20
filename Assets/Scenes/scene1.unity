@@ -1316,6 +1316,7 @@ MonoBehaviour:
   camera: {fileID: 963194225}
   morreuText: {fileID: 70554647}
   scoreText: {fileID: 460666482}
+  moedasText: {fileID: 358985538}
   velocidade: 0
   jogoComecou: 0
 --- !u!54 &1816198554
