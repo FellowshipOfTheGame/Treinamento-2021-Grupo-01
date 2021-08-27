@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class birdMovimento : MonoBehaviour
 {
     public GameObject player;
-    private Rigidbody playerRigidBody;
 
     public GameObject chao;
     public GameObject parede1;
@@ -17,11 +16,16 @@ public class birdMovimento : MonoBehaviour
     private pontosControlador ptsControl;
     private uiControler uiConttrollerScript;
 
+    private Rigidbody rb;
+
     public float velocidade;
     bool vivo = false;
     public bool jogoComecou = false;
-    int lane = 0;
 
+    private Button btn_play = null;
+    
+    private Vector3 verticalTargetPosition; 
+    private int currentLane = 1;
 
     float timer = 0;
     int tempoAttVelocidade = 1;
@@ -29,10 +33,10 @@ public class birdMovimento : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+        rb = GetComponent<Rigidbody>();
         Physics.gravity = new Vector3(0, 0, 0);
         velocidade = 10;
-
-        playerRigidBody = player.GetComponent<Rigidbody>();
 
         ptsControl = camera.GetComponent<pontosControlador>();
         uiConttrollerScript = camera.GetComponent<uiControler>();
@@ -52,9 +56,10 @@ public class birdMovimento : MonoBehaviour
             playerEstaVivo();
 
 
-            playerRigidBody.velocity = new Vector3(0, playerRigidBody.velocity.y, velocidade);
+            //player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 0.01f);
+            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, velocidade);
 
-            if (playerRigidBody.velocity.z != 0)
+            if (rb.velocity.z != 0)
             {
                 camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, player.transform.position.z - 10);
                 chao.transform.position = new Vector3(chao.transform.position.x, chao.transform.position.y, player.transform.position.z + 45);
@@ -75,43 +80,31 @@ public class birdMovimento : MonoBehaviour
         {
             if (player.transform.position.y < 6)
             {
-                playerRigidBody.velocity = new Vector3(0, 5, 0);
+                rb.velocity = new Vector3(0, 7, 0);
             }
         }
 
         if (Input.GetKeyDown("a"))
         {
-            switch (lane)
-            {
-                case 0:
-                    player.transform.position = new Vector3(-5, player.transform.position.y, player.transform.position.z);
-                    lane = -1;
-                    break;
-
-                case 1:
-                    player.transform.position = new Vector3(0, player.transform.position.y, player.transform.position.z);
-                    lane = 0;
-                    break;
-            }
-
+            HandleMove(-1);
         }
 
         if (Input.GetKeyDown("d"))
         {
-            switch (lane)
-            {
-                case -1:
-                    player.transform.position = new Vector3(0, player.transform.position.y, player.transform.position.z);
-                    lane = 0;
-                    break;
-
-                case 0:
-                    player.transform.position = new Vector3(5, player.transform.position.y, player.transform.position.z);
-                    lane = 1;
-                    break;
-            }
-
+            HandleMove(1);
         }
+
+        Vector3 targetPosition = new Vector3(verticalTargetPosition.x, transform.position.y, transform.position.z);
+		transform.position = Vector3.MoveTowards(transform.position, targetPosition, velocidade * 10 * Time.deltaTime);
+    }
+
+    private void HandleMove(int direction){
+        int targetLane = currentLane + direction;
+		if (targetLane < 0 || targetLane > 2)
+			return;
+		currentLane = targetLane;
+		verticalTargetPosition = new Vector3((currentLane - 1)*5, 0, 0);
+        
     }
 
     private void playerMorreu(int velocidadePosMorte)
@@ -131,7 +124,7 @@ public class birdMovimento : MonoBehaviour
         else
         if (player.transform.position.y <= -4.5f && vivo == true)
         {
-            playerMorreu((int)playerRigidBody.velocity.z);
+            playerMorreu((int)rb.velocity.z);
         }
     }
 
@@ -181,7 +174,6 @@ public class birdMovimento : MonoBehaviour
         Physics.gravity = new Vector3(0, -9.81f, 0);
         velocidade = 10;
         vivo = true;
-        lane = 0;
         jogoComecou = true;
         tempoAttVelocidade = 1;
         timer = 0;
@@ -191,8 +183,8 @@ public class birdMovimento : MonoBehaviour
 
         player.transform.position = new Vector3(0, 1.5f, player.transform.position.z);
         camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, player.transform.position.z - 10);
-        playerRigidBody.velocity = new Vector3(0, 0, velocidade);
-        playerRigidBody.angularVelocity = new Vector3(0, 0, 0);
+        rb.velocity = new Vector3(0, 0, velocidade);
+        rb.angularVelocity = new Vector3(0, 0, 0);
         player.transform.rotation = new Quaternion(0, 0, 0,0);
 
         uiConttrollerScript.iniciarJogoUI();
