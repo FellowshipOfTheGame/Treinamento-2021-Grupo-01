@@ -6,37 +6,36 @@ using UnityEngine.UI;
 public class birdMovimento : MonoBehaviour
 {
     public GameObject player;
+    private Rigidbody playerRigidBody;
+
     public GameObject chao;
     public GameObject parede1;
     public GameObject parede2;
     public GameObject paredeFim;
-    public GameObject camera;
 
-    public GameObject morreuText;
-    public GameObject scoreText;
-    public GameObject moedasText;
+    public GameObject camera;
+    private pontosControlador ptsControl;
+    private uiControler uiConttrollerScript;
 
     public float velocidade;
     bool vivo = false;
     public bool jogoComecou = false;
     int lane = 0;
-    private Button btn_play = null;
+
 
     float timer = 0;
     int tempoAttVelocidade = 1;
-
-    int pontos = 0;
-    int obstaculosPassados = 0;
-    int posInicialPlayer = 0;
-    int valorObstaculoPts = 50;
-
-    int qtdMoedas = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         Physics.gravity = new Vector3(0, 0, 0);
-        velocidade = 2;
+        velocidade = 10;
+
+        playerRigidBody = player.GetComponent<Rigidbody>();
+
+        ptsControl = camera.GetComponent<pontosControlador>();
+        uiConttrollerScript = camera.GetComponent<uiControler>();
 
     }
 
@@ -48,16 +47,14 @@ public class birdMovimento : MonoBehaviour
             if (vivo == true)
             {
                 movimentoPlayer();
-                attPontos();
             }
             mudaVel();
             playerEstaVivo();
 
 
-            //player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 0.01f);
-            player.GetComponent<Rigidbody>().velocity = new Vector3(0, player.GetComponent<Rigidbody>().velocity.y, velocidade);
+            playerRigidBody.velocity = new Vector3(0, playerRigidBody.velocity.y, velocidade);
 
-            if (player.GetComponent<Rigidbody>().velocity.z != 0)
+            if (playerRigidBody.velocity.z != 0)
             {
                 camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, player.transform.position.z - 10);
                 chao.transform.position = new Vector3(chao.transform.position.x, chao.transform.position.y, player.transform.position.z + 45);
@@ -66,7 +63,6 @@ public class birdMovimento : MonoBehaviour
                 paredeFim.transform.position = new Vector3(paredeFim.transform.position.x, paredeFim.transform.position.y, player.transform.position.z + 94);
             }
 
-            //camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z + 0.01f);
 
         }
     }
@@ -79,7 +75,7 @@ public class birdMovimento : MonoBehaviour
         {
             if (player.transform.position.y < 6)
             {
-                player.GetComponent<Rigidbody>().velocity = new Vector3(0, 5, 0);
+                playerRigidBody.velocity = new Vector3(0, 5, 0);
             }
         }
 
@@ -118,6 +114,13 @@ public class birdMovimento : MonoBehaviour
         }
     }
 
+    private void playerMorreu(int velocidadePosMorte)
+    {
+        vivo = false;
+        velocidade = velocidadePosMorte;
+        timer = 0;
+        uiConttrollerScript.mostrarTelaFinal();
+    }
 
     private void playerEstaVivo()
     {
@@ -126,38 +129,26 @@ public class birdMovimento : MonoBehaviour
             player.transform.position = new Vector3(player.transform.position.x, 6, player.transform.position.z);
         }
         else
-        if (player.transform.position.y <= -4.5f)
+        if (player.transform.position.y <= -4.5f && vivo == true)
         {
-            //Destroy(this);
-            mostrarTelaFinal();
-            vivo = false;
-                timer = 0;
+            playerMorreu((int)playerRigidBody.velocity.z);
         }
-    }
-
-    private void mostrarTelaFinal()
-    {
-        scoreText.GetComponent<Text>().text = "Total Pontos : " + pontos.ToString();
-        btn_play.gameObject.SetActive(true);
-        morreuText.gameObject.SetActive(true);
-        scoreText.gameObject.SetActive(true);
-        scoreText.gameObject.transform.position = new Vector3(536, scoreText.gameObject.transform.position.y, scoreText.gameObject.transform.position.z);
-        moedasText.gameObject.transform.position = new Vector3(536, moedasText.gameObject.transform.position.y, moedasText.gameObject.transform.position.z);
     }
 
     private void mudaVel()
     {
         if (timer > tempoAttVelocidade && vivo == true)
         {
-            Debug.Log(velocidade);
+            //Debug.Log(velocidade);
             velocidade += 0.1f;
             timer = 0;
         }
         else
         {
-            if (vivo == false && timer > 0.1f && velocidade > 0)
+            if (vivo == false && velocidade > 0)
             {
-                velocidade -= 0.1f;
+                Debug.Log(velocidade);
+                velocidade -= velocidade*Time.deltaTime;
                 timer = 0;
             }
         }
@@ -165,60 +156,46 @@ public class birdMovimento : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Moeda")
+        //Debug.Log(collision.gameObject.tag);
+        if (collision.gameObject.tag == "Obstaculos")
         {
-            Debug.Log("moeda");
-            collision.gameObject.GetComponent<moedaScript>().moedaPega();
-            qtdMoedas++;
-            moedasText.GetComponent<Text>().text = "Moedas : "+ qtdMoedas.ToString();
-            return;
+            playerMorreu(0);
         }
-        else
-        {
-            vivo = false;
-            timer = 0;
-            velocidade = 0;
-            mostrarTelaFinal();
-        }
-
 
     }
 
-    private void attPontos()
+    public void addMoeda()
     {
-        pontos = (int)(player.transform.position.z) + (obstaculosPassados * valorObstaculoPts) - posInicialPlayer + (qtdMoedas * 50);
-        scoreText.GetComponent<Text>().text = "Score : " + pontos.ToString();
+        //Debug.Log("moeda");
+        ptsControl.addMoedas();
     }
 
     public void addPtsObstaculo()
     {
-        obstaculosPassados ++;
+        ptsControl.addObstaculosPassados();
     }
 
     private void setUpJogo(bool primeiraVez)
     {
-        scoreText.gameObject.SetActive(true);
-        moedasText.gameObject.SetActive(true);
-
-        moedasText.gameObject.transform.position = new Vector3(136, moedasText.gameObject.transform.position.y, moedasText.gameObject.transform.position.z);
-        scoreText.gameObject.transform.position = new Vector3(136, scoreText.gameObject.transform.position.y, scoreText.gameObject.transform.position.z);
 
         Physics.gravity = new Vector3(0, -9.81f, 0);
-        velocidade = 2;
+        velocidade = 10;
         vivo = true;
         lane = 0;
         jogoComecou = true;
         tempoAttVelocidade = 1;
         timer = 0;
-        obstaculosPassados = 0;
-        posInicialPlayer = (int)player.transform.position.z;
-        qtdMoedas = 0;
+        ptsControl.resetQtdMoedas();
+        ptsControl.attPosInicial();
+        ptsControl.resetObstaculosPassados();
 
         player.transform.position = new Vector3(0, 1.5f, player.transform.position.z);
         camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, player.transform.position.z - 10);
-        player.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, velocidade);
-        player.GetComponent<Rigidbody>().angularVelocity = new Vector3(0, 0, 0);
+        playerRigidBody.velocity = new Vector3(0, 0, velocidade);
+        playerRigidBody.angularVelocity = new Vector3(0, 0, 0);
         player.transform.rotation = new Quaternion(0, 0, 0,0);
+
+        uiConttrollerScript.iniciarJogoUI();
 
         if (primeiraVez == false)
         {
@@ -230,10 +207,6 @@ public class birdMovimento : MonoBehaviour
 
     public void comecouJogo(Button btn)
     {
-        btn_play = btn;
-        btn_play.gameObject.SetActive(false);
-        morreuText.gameObject.SetActive(false);
-        scoreText.gameObject.SetActive(false);
 
         if (player.transform.position.z != 0)
         {

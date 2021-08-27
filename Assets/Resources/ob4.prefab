@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42c945879b8d5b146834e04bb171037d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tipoSaidaObstaculo: 4
 --- !u!1 &4161978917096292120
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +59,7 @@ GameObject:
   - component: {fileID: 6834841963923238016}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Obstaculos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

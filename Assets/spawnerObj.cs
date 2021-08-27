@@ -7,6 +7,7 @@ public class spawnerObj : MonoBehaviour
     // Start is called before the first frame update
     private GameObject[] objs;
     private GameObject player;
+    private birdMovimento playerScript;
 
 
     int obstaculos = 0;
@@ -18,6 +19,7 @@ public class spawnerObj : MonoBehaviour
     {
         objs = GameObject.FindGameObjectsWithTag("Player");
         player = objs[0];
+        playerScript = player.GetComponent<birdMovimento>();
 
         while (player.transform.position.z - (obstaculos * 10) > -80)
         {
@@ -35,16 +37,16 @@ public class spawnerObj : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player.transform.position.z - (obstaculos * 10) > -80)
+        if (player.transform.position.z - obstaculos * 10 > -80)
         {
             obstaculos++;
-            spawnObstaculo(94 + player.gameObject.GetComponent<birdMovimento>().velocidade - 2);
+            spawnObstaculo(94);
         }
 
         if (player.transform.position.z - ((moedas * 10) + 5) > -80)
         {
             moedas++;
-            spawnMoeda(85 + player.gameObject.GetComponent<birdMovimento>().velocidade - 2);
+            spawnMoeda(85+(moedas * 0.5f));
         }
     }
 
@@ -71,7 +73,6 @@ public class spawnerObj : MonoBehaviour
             alturaMoedaAnt = 5;
 
         int moedaLane = Random.Range(-1,2);
-        Debug.Log(moedaLane);
         GameObject obstaculoNovo = Instantiate(Resources.Load("moeda") as GameObject, new Vector3((moedaLane*5), alturaMoedaAnt, player.transform.position.z + distObj), Quaternion.identity);
     }
 
@@ -88,6 +89,7 @@ public class spawnerObj : MonoBehaviour
         while (player.transform.position.z - (obstaculos * 10) > -80)
         {
             obstaculos++;
+            Debug.Log(obstaculos);
             spawnObstaculo((obstaculos * 10));
         }
     }
