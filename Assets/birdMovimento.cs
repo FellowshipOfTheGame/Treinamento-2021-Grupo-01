@@ -12,15 +12,21 @@ public class birdMovimento : MonoBehaviour
     public GameObject paredeFim;
     public GameObject camera;
 
+    public float speed;
+
     public GameObject morreuText;
     public GameObject scoreText;
     public GameObject moedasText;
+    private Rigidbody rb;
 
     public float velocidade;
     bool vivo = false;
     public bool jogoComecou = false;
-    int lane = 0;
+
     private Button btn_play = null;
+    
+    private Vector3 verticalTargetPosition; 
+    private int currentLane = 1;
 
     float timer = 0;
     int tempoAttVelocidade = 1;
@@ -35,6 +41,7 @@ public class birdMovimento : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
         Physics.gravity = new Vector3(0, 0, 0);
         velocidade = 2;
 
@@ -55,7 +62,7 @@ public class birdMovimento : MonoBehaviour
 
 
             //player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 0.01f);
-            player.GetComponent<Rigidbody>().velocity = new Vector3(0, player.GetComponent<Rigidbody>().velocity.y, velocidade);
+            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, velocidade);
 
             if (player.GetComponent<Rigidbody>().velocity.z != 0)
             {
@@ -79,45 +86,32 @@ public class birdMovimento : MonoBehaviour
         {
             if (player.transform.position.y < 6)
             {
-                player.GetComponent<Rigidbody>().velocity = new Vector3(0, 5, 0);
+                rb.velocity = new Vector3(0, 7, 0);
             }
         }
 
         if (Input.GetKeyDown("a"))
         {
-            switch (lane)
-            {
-                case 0:
-                    player.transform.position = new Vector3(-5, player.transform.position.y, player.transform.position.z);
-                    lane = -1;
-                    break;
-
-                case 1:
-                    player.transform.position = new Vector3(0, player.transform.position.y, player.transform.position.z);
-                    lane = 0;
-                    break;
-            }
-
+            HandleMove(-1);
         }
 
         if (Input.GetKeyDown("d"))
         {
-            switch (lane)
-            {
-                case -1:
-                    player.transform.position = new Vector3(0, player.transform.position.y, player.transform.position.z);
-                    lane = 0;
-                    break;
-
-                case 0:
-                    player.transform.position = new Vector3(5, player.transform.position.y, player.transform.position.z);
-                    lane = 1;
-                    break;
-            }
-
+            HandleMove(1);
         }
+
+        Vector3 targetPosition = new Vector3(verticalTargetPosition.x, transform.position.y, transform.position.z);
+		transform.position = Vector3.MoveTowards(transform.position, targetPosition, velocidade * 10 * Time.deltaTime);
     }
 
+    private void HandleMove(int direction){
+        int targetLane = currentLane + direction;
+		if (targetLane < 0 || targetLane > 2)
+			return;
+		currentLane = targetLane;
+		verticalTargetPosition = new Vector3((currentLane - 1)*5, 0, 0);
+        
+    }
 
     private void playerEstaVivo()
     {
@@ -149,7 +143,7 @@ public class birdMovimento : MonoBehaviour
     {
         if (timer > tempoAttVelocidade && vivo == true)
         {
-            Debug.Log(velocidade);
+            //Debug.Log(velocidade);
             velocidade += 0.1f;
             timer = 0;
         }
@@ -167,10 +161,12 @@ public class birdMovimento : MonoBehaviour
     {
         if (collision.gameObject.tag == "Moeda")
         {
-            Debug.Log("moeda");
+            //Debug.Log("moeda");
+            rb.isKinematic = true;
             collision.gameObject.GetComponent<moedaScript>().moedaPega();
             qtdMoedas++;
             moedasText.GetComponent<Text>().text = "Moedas : "+ qtdMoedas.ToString();
+            rb.isKinematic = false;
             return;
         }
         else
@@ -206,7 +202,6 @@ public class birdMovimento : MonoBehaviour
         Physics.gravity = new Vector3(0, -9.81f, 0);
         velocidade = 2;
         vivo = true;
-        lane = 0;
         jogoComecou = true;
         tempoAttVelocidade = 1;
         timer = 0;

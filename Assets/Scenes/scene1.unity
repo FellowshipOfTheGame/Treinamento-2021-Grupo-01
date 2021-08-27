@@ -1314,9 +1314,11 @@ MonoBehaviour:
   parede2: {fileID: 1917014549}
   paredeFim: {fileID: 1326876113}
   camera: {fileID: 963194225}
+  speed: 10
   morreuText: {fileID: 70554647}
   scoreText: {fileID: 460666482}
   moedasText: {fileID: 358985538}
+  rb: {fileID: 0}
   velocidade: 0
   jogoComecou: 0
 --- !u!54 &1816198554

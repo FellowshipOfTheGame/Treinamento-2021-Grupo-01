@@ -71,7 +71,7 @@ public class spawnerObj : MonoBehaviour
             alturaMoedaAnt = 5;
 
         int moedaLane = Random.Range(-1,2);
-        Debug.Log(moedaLane);
+        //Debug.Log(moedaLane);
         GameObject obstaculoNovo = Instantiate(Resources.Load("moeda") as GameObject, new Vector3((moedaLane*5), alturaMoedaAnt, player.transform.position.z + distObj), Quaternion.identity);
     }
 
