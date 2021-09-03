@@ -18,6 +18,14 @@ public class birdMovimento : MonoBehaviour
 
     private Rigidbody rb;
 
+    //SpeedBoost Variables
+    private float oldSpeed;
+    private float boostTimer;
+    private bool boosting;
+
+    //Extra Life
+    private bool extraLife;
+
     public float velocidade;
     bool vivo = false;
     public bool jogoComecou = false;
@@ -33,10 +41,16 @@ public class birdMovimento : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
         rb = GetComponent<Rigidbody>();
+        // playerCollider = gameObject.GetComponent<Collider>().Enabled;
         Physics.gravity = new Vector3(0, 0, 0);
+
         velocidade = 10;
+        oldSpeed = velocidade;
+        boostTimer = 0;
+        boosting = false;
+
+        extraLife = false;
 
         ptsControl = camera.GetComponent<pontosControlador>();
         uiConttrollerScript = camera.GetComponent<uiControler>();
@@ -55,9 +69,17 @@ public class birdMovimento : MonoBehaviour
             mudaVel();
             playerEstaVivo();
 
-
             //player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 0.01f);
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, velocidade);
+
+            if(boosting) {
+                boostTimer += Time.deltaTime;
+                if(boostTimer >= 5){
+                    velocidade = oldSpeed;
+                    boosting = false;
+                    boostTimer = 0;
+                }
+            }
 
             if (rb.velocity.z != 0)
             {
@@ -104,15 +126,20 @@ public class birdMovimento : MonoBehaviour
 			return;
 		currentLane = targetLane;
 		verticalTargetPosition = new Vector3((currentLane - 1)*5, 0, 0);
-        
     }
 
     private void playerMorreu(int velocidadePosMorte)
     {
-        vivo = false;
-        velocidade = velocidadePosMorte;
-        timer = 0;
-        uiConttrollerScript.mostrarTelaFinal();
+        if (extraLife == false)
+        {
+            vivo = false;
+            velocidade = velocidadePosMorte;
+            timer = 0;
+            uiConttrollerScript.mostrarTelaFinal();
+        } else if (extraLife == true) {
+            extraLife = false;
+            resetPlayer(10);
+        }
     }
 
     private void playerEstaVivo()
@@ -140,7 +167,7 @@ public class birdMovimento : MonoBehaviour
         {
             if (vivo == false && velocidade > 0)
             {
-                Debug.Log(velocidade);
+                // Debug.Log(velocidade);
                 velocidade -= velocidade*Time.deltaTime;
                 timer = 0;
             }
@@ -149,12 +176,38 @@ public class birdMovimento : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        //Debug.Log(collision.gameObject.tag);
+        // Debug.Log(collision.gameObject.tag);
         if (collision.gameObject.tag == "Obstaculos")
         {
             playerMorreu(0);
         }
+    }
 
+    public void resetPlayer(int pos) {
+        player.transform.position = new Vector3(0, 1.5f, player.transform.position.z - pos);
+        camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, player.transform.position.z - 10);
+        rb.velocity = new Vector3(0, 0, velocidade);
+        rb.angularVelocity = new Vector3(0, 0, 0);
+        player.transform.rotation = new Quaternion(0, 0, 0,0);
+
+        uiConttrollerScript.iniciarJogoUI();
+    }
+
+    public void addExtraLife () {
+        // Debug.Log("Working");
+        if(extraLife == false) {
+            extraLife = true;
+        }
+    }
+
+    public void addSpeedBoost () {
+        if(boosting == false){
+            oldSpeed = velocidade;
+            velocidade = velocidade*0.75f;
+            boosting = true;
+        } else if (boosting) {
+            boostTimer = 0;
+        }
     }
 
     public void addMoeda()
@@ -180,19 +233,17 @@ public class birdMovimento : MonoBehaviour
         ptsControl.resetQtdMoedas();
         ptsControl.attPosInicial();
         ptsControl.resetObstaculosPassados();
-
-        player.transform.position = new Vector3(0, 1.5f, player.transform.position.z);
-        camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, player.transform.position.z - 10);
-        rb.velocity = new Vector3(0, 0, velocidade);
-        rb.angularVelocity = new Vector3(0, 0, 0);
-        player.transform.rotation = new Quaternion(0, 0, 0,0);
-
-        uiConttrollerScript.iniciarJogoUI();
+        camera.gameObject.GetComponent<spawnerObj>().reiniciarSpeedBoosts();
+        camera.gameObject.GetComponent<spawnerObj>().reiniciarExtraLifes();
+        
+        resetPlayer(0);
 
         if (primeiraVez == false)
         {
             camera.gameObject.GetComponent<spawnerObj>().reiniciarObstaculos();
             camera.gameObject.GetComponent<spawnerObj>().reiniciarMoedas();
+            camera.gameObject.GetComponent<spawnerObj>().reiniciarSpeedBoosts();
+            camera.gameObject.GetComponent<spawnerObj>().reiniciarExtraLifes();
         }
             
     }
