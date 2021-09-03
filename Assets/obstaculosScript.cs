@@ -36,9 +36,7 @@ public class obstaculosScript : MonoBehaviour
     {
         if (this.transform.position.z < player.transform.position.z-1.5f)
         {
-            //Debug.Log("a");
             passou = true;
-            //Destroy(gameObject);
         }
 
         if (passou == true)
@@ -93,7 +91,7 @@ public class obstaculosScript : MonoBehaviour
                 }
                 break;
             case tipoSaida.baixo://o obstaculo vai sair por baixo
-                if (this.transform.position.x > -7)
+                if (this.transform.position.y > -7)
                 {
                     gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 0.1f, gameObject.transform.position.z);
                 }
