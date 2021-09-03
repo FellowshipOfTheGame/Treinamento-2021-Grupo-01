@@ -15,6 +15,7 @@ public class birdMovimento : MonoBehaviour
     public GameObject camera;
     private pontosControlador ptsControl;
     private uiControler uiConttrollerScript;
+    private spawnerObj spawnerObjetos;
 
     private Rigidbody rb;
 
@@ -54,6 +55,7 @@ public class birdMovimento : MonoBehaviour
 
         ptsControl = camera.GetComponent<pontosControlador>();
         uiConttrollerScript = camera.GetComponent<uiControler>();
+        spawnerObjetos = camera.gameObject.GetComponent<spawnerObj>();
 
     }
 
@@ -69,7 +71,6 @@ public class birdMovimento : MonoBehaviour
             mudaVel();
             playerEstaVivo();
 
-            //player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 0.01f);
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, velocidade);
 
             if(boosting) {
@@ -136,6 +137,7 @@ public class birdMovimento : MonoBehaviour
             velocidade = velocidadePosMorte;
             timer = 0;
             uiConttrollerScript.mostrarTelaFinal();
+            ptsControl.salvarDados();
         } else if (extraLife == true) {
             extraLife = false;
             resetPlayer(10);
@@ -149,7 +151,7 @@ public class birdMovimento : MonoBehaviour
             player.transform.position = new Vector3(player.transform.position.x, 6, player.transform.position.z);
         }
         else
-        if (player.transform.position.y <= -4.5f && vivo == true)
+        if (player.transform.position.y <= -4.45f && vivo == true)
         {
             playerMorreu((int)rb.velocity.z);
         }
@@ -159,7 +161,6 @@ public class birdMovimento : MonoBehaviour
     {
         if (timer > tempoAttVelocidade && vivo == true)
         {
-            //Debug.Log(velocidade);
             velocidade += 0.1f;
             timer = 0;
         }
@@ -176,8 +177,7 @@ public class birdMovimento : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // Debug.Log(collision.gameObject.tag);
-        if (collision.gameObject.tag == "Obstaculos")
+        if (collision.gameObject.tag == "Obstaculos" && vivo == true)
         {
             playerMorreu(0);
         }
@@ -212,7 +212,6 @@ public class birdMovimento : MonoBehaviour
 
     public void addMoeda()
     {
-        //Debug.Log("moeda");
         ptsControl.addMoedas();
     }
 
@@ -231,12 +230,15 @@ public class birdMovimento : MonoBehaviour
         tempoAttVelocidade = 1;
         timer = 0;
         ptsControl.resetQtdMoedas();
-        ptsControl.attPosInicial();
+
         ptsControl.resetObstaculosPassados();
         camera.gameObject.GetComponent<spawnerObj>().reiniciarSpeedBoosts();
         camera.gameObject.GetComponent<spawnerObj>().reiniciarExtraLifes();
         
         resetPlayer(0);
+
+        ptsControl.setPosInicial(gameObject.transform.position.z);
+        spawnerObjetos.setPosInicialPlayer(ptsControl.getPosInicial());
 
         if (primeiraVez == false)
         {

@@ -9,6 +9,8 @@ public class spawnerObj : MonoBehaviour
     private GameObject player;
     private birdMovimento playerScript;
 
+    private int posInicialPlayer = 0;
+
 
     int obstaculos = 0;
     int moedas = 0;
@@ -25,13 +27,13 @@ public class spawnerObj : MonoBehaviour
         player = objs[0];
         playerScript = player.GetComponent<birdMovimento>();
 
-        while (player.transform.position.z - (obstaculos * 10) > -80)
+        while (player.transform.position.z - posInicialPlayer - (obstaculos * 10) > -80)
         {
             obstaculos++;
             spawnObstaculo((obstaculos * 10));
         }
 
-        while (player.transform.position.z - ((moedas * 10) + 5) > -80)
+        while (player.transform.position.z - posInicialPlayer - ((moedas * 10) + 5) > -80)
         {
             moedas++;
             spawnMoeda((moedas*10)+5);
@@ -53,25 +55,25 @@ public class spawnerObj : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player.transform.position.z - obstaculos * 10 > -80)
+        if (player.transform.position.z - posInicialPlayer - obstaculos * 10 > -80)
         {
             obstaculos++;
-            spawnObstaculo(94);
+            spawnObstaculo(95+(int)((player.transform.position.z - posInicialPlayer)/100));
         }
 
-        if (player.transform.position.z - ((moedas * 10) + 5) > -80)
+        if (player.transform.position.z - posInicialPlayer - ((moedas * 10) + 5) > -80)
         {
             moedas++;
-            spawnMoeda(85+(moedas * 0.5f));
+            spawnMoeda(85 + (int)((player.transform.position.z - posInicialPlayer) / 100));
         }
 
-        if (player.transform.position.z - ((moedas * 10) + 5) > -80)
+        if (player.transform.position.z - ((speedBoosts * 10) + 5) > -80)
         {
             speedBoosts++;
             spawnSpeedBoost(85+(speedBoosts * 0.5f));
         }
 
-        if (player.transform.position.z - ((moedas * 10) + 5) > -80)
+        if (player.transform.position.z - ((extraLife * 10) + 5) > -80)
         {
             extraLife++;
             spawnExtraLife(85+(extraLife * 0.5f));
@@ -80,10 +82,9 @@ public class spawnerObj : MonoBehaviour
 
     private void spawnObstaculo(float distObs)
     {
-        // int obstaculo = Random.Range(1, 6);
-        // string nome = "ob" + obstaculo.ToString();
-        // //Debug.Log(nome);
-        // GameObject obstaculoNovo = Instantiate(Resources.Load(nome) as GameObject, new Vector3(0, 0, player.transform.position.z + distObs), Quaternion.identity);
+        int obstaculo = Random.Range(1, 6);
+        string nome = "ob" + obstaculo.ToString();
+        GameObject obstaculoNovo = Instantiate(Resources.Load(nome) as GameObject, new Vector3(0, 0, player.transform.position.z + distObs), Quaternion.identity);
     }
 
     private void spawnMoeda(float distObj)
@@ -101,8 +102,7 @@ public class spawnerObj : MonoBehaviour
             alturaMoedaAnt = 5;
 
         int moedaLane = Random.Range(-1,2);
-        
-        //Debug.Log(moedaLane);
+
         GameObject obstaculoNovo = Instantiate(Resources.Load("moeda") as GameObject, new Vector3((moedaLane*5), alturaMoedaAnt, player.transform.position.z + distObj), Quaternion.identity);
     }
 
@@ -156,12 +156,17 @@ public class spawnerObj : MonoBehaviour
 
         obstaculos = 0;
 
-        while (player.transform.position.z - (obstaculos * 10) > -80)
+        while (player.transform.position.z - posInicialPlayer - (obstaculos * 10) > -80)
         {
             obstaculos++;
-            //Debug.Log(obstaculos);
             spawnObstaculo((obstaculos * 10));
         }
+    }
+
+    public void setPosInicialPlayer(int posInicial)
+    {
+        posInicialPlayer = posInicial;
+
     }
 
     public void reiniciarMoedas()
@@ -174,7 +179,7 @@ public class spawnerObj : MonoBehaviour
 
         moedas = 0;
 
-        while (player.transform.position.z - ((moedas * 10) + 5) > -80)
+        while (player.transform.position.z - posInicialPlayer - ((moedas * 10) + 5) > -80)
         {
             moedas++;
             spawnMoeda((moedas * 10) + 5);
