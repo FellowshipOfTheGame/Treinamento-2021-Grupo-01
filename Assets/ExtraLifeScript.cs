@@ -20,7 +20,7 @@ public class ExtraLifeScript : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        else if (Vector3.Distance(player.transform.position, gameObject.transform.position) < 1.5f)
+        else if (Vector3.Distance(player.transform.position, gameObject.transform.position) < 3f)
         {
             player.GetComponent<birdMovimento>().addExtraLife();
             Destroy(gameObject);

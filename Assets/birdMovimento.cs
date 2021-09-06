@@ -76,7 +76,7 @@ public class birdMovimento : MonoBehaviour
             if(boosting) {
                 boostTimer += Time.deltaTime;
                 if(boostTimer >= 5){
-                    velocidade = oldSpeed;
+                    velocidade = oldSpeed + valocidade/(oldSpeed*0.8)
                     boosting = false;
                     boostTimer = 0;
                 }
@@ -203,7 +203,7 @@ public class birdMovimento : MonoBehaviour
     public void addSpeedBoost () {
         if(boosting == false){
             oldSpeed = velocidade;
-            velocidade = velocidade*0.75f;
+            velocidade = velocidade*0.8f;
             boosting = true;
         } else if (boosting) {
             boostTimer = 0;

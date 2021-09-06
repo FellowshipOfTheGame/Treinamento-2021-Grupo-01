@@ -11,6 +11,8 @@ public class spawnerObj : MonoBehaviour
 
     private int posInicialPlayer = 0;
 
+    int spawnRate;
+    int maxSpawnRate = 11;
 
     int obstaculos = 0;
     int moedas = 0;
@@ -39,13 +41,14 @@ public class spawnerObj : MonoBehaviour
             spawnMoeda((moedas*10)+5);
         }
 
-        while (player.transform.position.z - ((moedas * 10) + 5) > -80)
+        
+        while (player.transform.position.z - posInicialPlayer - ((speedBoosts * 10) + 5) > -80)
         {
             speedBoosts++;
-            spawnSpeedBoost((moedas*10)+5);
+            spawnSpeedBoost((speedBoosts*10)+5);
         }
 
-        while (player.transform.position.z - ((moedas * 10) + 5) > -80)
+        while (player.transform.position.z - posInicialPlayer - ((extraLife * 10) + 5) > -80)
         {
             extraLife++;
             spawnExtraLife((extraLife*10)+5);
@@ -67,16 +70,18 @@ public class spawnerObj : MonoBehaviour
             spawnMoeda(85 + (int)((player.transform.position.z - posInicialPlayer) / 100));
         }
 
-        if (player.transform.position.z - ((speedBoosts * 10) + 5) > -80)
+        if (player.transform.position.z - posInicialPlayer - ((speedBoosts * 10) + 5) > -80)
         {
             speedBoosts++;
             spawnSpeedBoost(85+(speedBoosts * 0.5f));
+            
         }
 
-        if (player.transform.position.z - ((extraLife * 10) + 5) > -80)
+        if (player.transform.position.z - posInicialPlayer - ((extraLife * 10) + 5) > -80)
         {
-            extraLife++;
-            spawnExtraLife(85+(extraLife * 0.5f));
+                extraLife++;
+                spawnExtraLife(85+(extraLife * 0.5f));
+            
         }
     }
 
@@ -108,42 +113,48 @@ public class spawnerObj : MonoBehaviour
 
     private void spawnExtraLife(float distObj)
     {
-        if (extraLife % 5 == 0)
-        {
-            alturaExtraLife = 0;
+        spawnRate = Random.Range(1, maxSpawnRate);
+        if(spawnRate == 1){
+            if (extraLife % 5 == 0)
+            {
+                alturaExtraLife = 0;
+            }
+            alturaExtraLife += Random.Range(-2, 3);
+
+            if (alturaExtraLife < -4)
+                alturaExtraLife = -4;
+
+            if (alturaExtraLife > 5)
+                alturaExtraLife = 5;
+
+            int extraLifeLane = Random.Range(-1,2);
+            
+            //Debug.Log(moedaLane);
+            GameObject obstaculoNovo = Instantiate(Resources.Load("ExtraLife") as GameObject, new Vector3((extraLifeLane*5), alturaExtraLife, player.transform.position.z + distObj), Quaternion.identity);
         }
-        alturaExtraLife += Random.Range(-2, 3);
-
-        if (alturaExtraLife < -4)
-            alturaExtraLife = -4;
-
-        if (alturaExtraLife > 5)
-            alturaExtraLife = 5;
-
-        int extraLifeLane = Random.Range(-1,2);
-        
-        //Debug.Log(moedaLane);
-        GameObject obstaculoNovo = Instantiate(Resources.Load("ExtraLife") as GameObject, new Vector3((extraLifeLane*5), alturaExtraLife, player.transform.position.z + distObj), Quaternion.identity);
     }
 
     private void spawnSpeedBoost(float distObj)
     {
-        if (speedBoosts % 5 == 0)
-        {
-            alturaBoostAnt = 0;
+        spawnRate = Random.Range(1, maxSpawnRate);
+        if(spawnRate == 1){
+            if (speedBoosts % 5 == 0)
+            {
+                alturaBoostAnt = 0;
+            }
+            alturaBoostAnt += Random.Range(-2, 3);
+
+            if (alturaBoostAnt < -4)
+                alturaBoostAnt = -4;
+
+            if (alturaBoostAnt > 5)
+                alturaBoostAnt = 5;
+
+            int boostLane = Random.Range(-1,2);
+            
+            //Debug.Log(moedaLane);
+            GameObject obstaculoNovo = Instantiate(Resources.Load("SpeedBoost") as GameObject, new Vector3((boostLane*5), alturaBoostAnt, player.transform.position.z + distObj), Quaternion.identity);
         }
-        alturaBoostAnt += Random.Range(-2, 3);
-
-        if (alturaBoostAnt < -4)
-            alturaBoostAnt = -4;
-
-        if (alturaBoostAnt > 5)
-            alturaBoostAnt = 5;
-
-        int boostLane = Random.Range(-1,2);
-        
-        //Debug.Log(moedaLane);
-        GameObject obstaculoNovo = Instantiate(Resources.Load("SpeedBoost") as GameObject, new Vector3((boostLane*5), alturaBoostAnt, player.transform.position.z + distObj), Quaternion.identity);
     }
 
     public void reiniciarObstaculos()
@@ -195,8 +206,9 @@ public class spawnerObj : MonoBehaviour
         }
 
         extraLife = 0;
+        
 
-        while (player.transform.position.z - ((extraLife * 10) + 5) > -80)
+        while (player.transform.position.z - posInicialPlayer - ((extraLife * 10) + 5) > -80 )
         {
             extraLife++;
             spawnExtraLife((extraLife * 10) + 5);
@@ -212,8 +224,8 @@ public class spawnerObj : MonoBehaviour
         }
 
         speedBoosts = 0;
-
-        while (player.transform.position.z - ((speedBoosts * 10) + 5) > -80)
+        
+        while (player.transform.position.z - posInicialPlayer - ((speedBoosts * 10) + 5) > -80)
         {
             speedBoosts++;
             spawnSpeedBoost((speedBoosts * 10) + 5);
