@@ -17,6 +17,8 @@ public class birdMovimento : MonoBehaviour
 
     private Rigidbody rb;
 
+    private AudioSource audio;
+
     //SpeedBoost Variables
     private float oldSpeed;
     private float boostTimer;
@@ -24,6 +26,9 @@ public class birdMovimento : MonoBehaviour
 
     //Extra Life
     private bool extraLife;
+
+    public AudioClip jumpSound;
+    public AudioClip dyingSoung;
 
     public float velocidade;
     bool vivo = false;
@@ -41,6 +46,7 @@ public class birdMovimento : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audio = GetComponent<AudioSource>();
         // playerCollider = gameObject.GetComponent<Collider>().Enabled;
         Physics.gravity = new Vector3(0, 0, 0);
 
@@ -100,6 +106,8 @@ public class birdMovimento : MonoBehaviour
             if (player.transform.position.y < 6)
             {
                 rb.velocity = new Vector3(0, 7, 0);
+                audio.Stop();
+                audio.PlayOneShot(jumpSound, 0.5f);
             }
         }
 
@@ -130,6 +138,8 @@ public class birdMovimento : MonoBehaviour
         if (extraLife == false)
         {
             vivo = false;
+            audio.Stop();
+            audio.PlayOneShot(dyingSoung, 0.2f);
             ptsControl.setPlayerVivo(false);
             velocidade = velocidadePosMorte;
             timer = 0;
