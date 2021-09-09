@@ -13,7 +13,7 @@ public class obstaculosScript : MonoBehaviour
 
     public tipoSaida tipoSaidaObstaculo = tipoSaida.nenhum;
 
-    // o primeiro objeto sempre sera o de cima ou da esquerda e o segundo sempre sera direita ou embaixo
+    //objetos que irao sair da tela, maximo de 2
     private Transform object1 = null;
     private Transform object2= null;
 

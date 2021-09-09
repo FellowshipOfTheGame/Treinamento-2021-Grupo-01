@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class pontosControlador : MonoBehaviour
 {
+    //informacoes a serem salvas no playerPrefs
     private int topRun = 0;
     private int qtdMoedasBolso;
     public int qtdUpgrades = 1;
@@ -19,19 +20,25 @@ public class pontosControlador : MonoBehaviour
     private GameObject camera;
     private uiControler uiControllerScript;
 
+    //contadores dos objetivos do jogo
     private int pontos = 0;
     private int obstaculosPassados = 0;
     private int qtdMoedas = 0;
     private int posInicialPlayer = 0;
 
+    //verificador se o player esta vivo
+    private bool playerVivo = false;
 
+    //multiplicadores para os upgrades
     public int valorMoedasPontos = 50;
     public int valorObstaculoPts = 50;
-
     public int multiplicadorPontos = 1;
+    public int multiplicadorMoedas;
+
     // Start is called before the first frame update
     void Start()
     {
+        multiplicadorPontos = 1;
         Array.Resize(ref upgradesNiveis, qtdUpgrades);
 
         objs = GameObject.FindGameObjectsWithTag("Player");
@@ -52,15 +59,30 @@ public class pontosControlador : MonoBehaviour
         qtdVezesJogadas = PlayerPrefs.GetInt("vezesJogadas", 0);
         topRun = PlayerPrefs.GetInt("topRun", 0);
 
-        gameObject.GetComponent<lojaScript>().attNivelUpgrades();
+        multiplicadorMoedas = upgradesNiveis[1] + 1;
+        multiplicadorPontos = upgradesNiveis[0] + 1;
+        valorMoedasPontos = upgradesNiveis[3] + 1;
+        valorObstaculoPts = upgradesNiveis[2] + 1;
+        setMultMoedas(multiplicadorMoedas);
+        setMultPontos(multiplicadorPontos);
+        setMultMoedasPontos(valorMoedasPontos);
+        setMultObstaculosPontos(valorObstaculoPts);
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        pontos = (int)(player.transform.position.z * multiplicadorPontos) + (obstaculosPassados * valorObstaculoPts) - posInicialPlayer + (qtdMoedas * valorMoedasPontos);
-        uiControllerScript.atualizarUIPontos();
+        if (player == true)
+        {
+            pontos = (int)((player.transform.position.z - posInicialPlayer) * multiplicadorPontos) + (obstaculosPassados * valorObstaculoPts) + (qtdMoedas * valorMoedasPontos);
+            uiControllerScript.atualizarUIPontos();
+        }
+    }
+
+    public void setPlayerVivo(bool estado)
+    {
+        playerVivo = estado;
     }
 
     public void addObstaculosPassados()
@@ -78,11 +100,40 @@ public class pontosControlador : MonoBehaviour
         pontos -= pontosRemover;
     }
 
+    public int getMultMoedas()
+    {
+        return multiplicadorMoedas;
+    }
+
+    public void setMultMoedas(int mult)
+    {
+        multiplicadorMoedas = mult;
+        gameObject.GetComponent<spawnerObj>().setNivelMoeda(multiplicadorMoedas-2);
+        gameObject.GetComponent<spawnerObj>().reiniciarMoedas();
+
+    }
+
+    public void setMultPontos(int mult)
+    {
+        multiplicadorPontos = mult;
+    }
+
+    public void setMultObstaculosPontos(int mult)
+    {
+        valorObstaculoPts = mult * 50;
+    }
+
+    public void setMultMoedasPontos(int mult)
+    {
+        valorMoedasPontos = mult * 50;
+    }
+
+
     public void addMoedas()
     {
-        qtdMoedas++;
-        qtdMoedasBolso++;
-        qtdMoedasTotal++;
+        qtdMoedas += multiplicadorMoedas;
+        qtdMoedasBolso += multiplicadorMoedas;
+        qtdMoedasTotal += multiplicadorMoedas;
         uiControllerScript.atualizarUIMoedas();
     }
 
@@ -193,8 +244,13 @@ public class pontosControlador : MonoBehaviour
         qtdMoedasTotal = 0;
         qtdDistanciaPercorrida = 0;
         PlayerPrefs.Save();
+        setMultMoedas(1);
+        setMultPontos(1);
+        setMultObstaculosPontos(1);
+        setMultMoedasPontos(1);
 
         uiControllerScript.fecharRecordes();
+        gameObject.GetComponent<lojaScript>().reloadLoja();
     }
 
 

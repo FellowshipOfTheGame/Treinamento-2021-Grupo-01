@@ -17,7 +17,6 @@ public class moedaScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (player.gameObject.transform.position.z - 10 > gameObject.transform.position.z)
         {
             Destroy(gameObject);

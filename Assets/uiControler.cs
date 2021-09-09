@@ -7,7 +7,9 @@ public class uiControler : MonoBehaviour
 {
 
     private pontosControlador pontosController;
+    private lojaScript lojaScript;
 
+    //ui da gameplay
     public GameObject morreuTextGameObject;
     private Text morreuText;
     public GameObject scoreTextGameObject;
@@ -15,6 +17,7 @@ public class uiControler : MonoBehaviour
     public GameObject moedasTextGameObject;
     private Text moedasText;
     public Button btn_play;
+    public Image imgExtraLife;
     
     //ui da loja
     public Button btn_abrirLoja;
@@ -30,9 +33,6 @@ public class uiControler : MonoBehaviour
     public Text txtTotalVezesJogadas;
     public Text txtTotalDistanciaPercorrida;
 
-    
-
-
     // Start is called before the first frame update
     void Start()
     {
@@ -41,7 +41,7 @@ public class uiControler : MonoBehaviour
         moedasText = moedasTextGameObject.GetComponent<Text>();
 
         pontosController = gameObject.GetComponent<pontosControlador>();
-
+        lojaScript = gameObject.GetComponent<lojaScript>();
     }
 
     // Update is called once per frame
@@ -94,7 +94,13 @@ public class uiControler : MonoBehaviour
         img_backgroundLoja.gameObject.SetActive(true);
         qtdMoedasLoja.text = pontosController.getMoedasBolso().ToString();
         btn_highscore.gameObject.SetActive(false);
+        lojaScript.lojaAberta();
 
+    }
+
+    public void attMoedasLoja()
+    {
+        qtdMoedasLoja.text = pontosController.getMoedasBolso().ToString();
     }
 
     public void fecharLoja()
@@ -127,6 +133,16 @@ public class uiControler : MonoBehaviour
         btn_abrirLoja.gameObject.SetActive(true);
         btn_highscore.gameObject.SetActive(true);
         btn_play.gameObject.SetActive(true);
+    }
+
+    public void imgExtraLifeOn()
+    {
+        imgExtraLife.gameObject.SetActive(true);
+    }
+
+    public void imgExtraLifeOff()
+    {
+        imgExtraLife.gameObject.SetActive(false);
     }
 
 }

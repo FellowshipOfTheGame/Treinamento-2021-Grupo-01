@@ -11,20 +11,38 @@ public class spawnerObj : MonoBehaviour
 
     private int posInicialPlayer = 0;
 
+    //mudanca da probabilidade do spawn dos boosts
     int spawnRate;
     int maxSpawnRate = 11;
 
+    //quantidades de cada objeto na tela
     int obstaculos = 0;
+    int qtdParedes;
     int moedas = 0;
     int speedBoosts = 0;
     int extraLife = 0;
 
+    //controlador da altura dos spawns dos objetos
     int alturaMoedaAnt = 0;
     int alturaBoostAnt = 0;
     int alturaExtraLife = 0;
 
+    private int nivelMoeda;
+    private Color[] coresMoeda = new Color[9];
+
     void Start()
     {
+        qtdParedes = -2;
+
+        coresMoeda[0] = Color.cyan;
+        coresMoeda[1] = Color.blue;
+        coresMoeda[2] = Color.green;
+        coresMoeda[3] = Color.red;
+        coresMoeda[4] = Color.magenta;
+        coresMoeda[5] = Color.gray;
+        coresMoeda[6] = Color.black;
+        coresMoeda[7] = Color.white;
+        coresMoeda[8] = Color.white;
         objs = GameObject.FindGameObjectsWithTag("Player");
         player = objs[0];
         playerScript = player.GetComponent<birdMovimento>();
@@ -34,14 +52,7 @@ public class spawnerObj : MonoBehaviour
             obstaculos++;
             spawnObstaculo((obstaculos * 10));
         }
-
-        while (player.transform.position.z - posInicialPlayer - ((moedas * 10) + 5) > -80)
-        {
-            moedas++;
-            spawnMoeda((moedas*10)+5);
-        }
-
-        
+  
         while (player.transform.position.z - posInicialPlayer - ((speedBoosts * 10) + 5) > -80)
         {
             speedBoosts++;
@@ -53,6 +64,17 @@ public class spawnerObj : MonoBehaviour
             extraLife++;
             spawnExtraLife((extraLife*10)+5);
         }
+
+        while (qtdParedes < 8)
+        {
+            qtdParedes++;
+            spawnParedes(qtdParedes * 12);
+        }
+    }
+
+    public void setNivelMoeda(int nivel)
+    {
+        nivelMoeda = nivel;
     }
 
     // Update is called once per frame
@@ -70,6 +92,12 @@ public class spawnerObj : MonoBehaviour
             spawnMoeda(85 + (int)((player.transform.position.z - posInicialPlayer) / 100));
         }
 
+        if (player.transform.position.z - posInicialPlayer - (qtdParedes * 12) > -84)
+        {
+            qtdParedes++;
+            spawnParedes(96);
+        }
+
         if (player.transform.position.z - posInicialPlayer - ((speedBoosts * 10) + 5) > -80)
         {
             speedBoosts++;
@@ -79,17 +107,30 @@ public class spawnerObj : MonoBehaviour
 
         if (player.transform.position.z - posInicialPlayer - ((extraLife * 10) + 5) > -80)
         {
-                extraLife++;
-                spawnExtraLife(85+(extraLife * 0.5f));
+            extraLife++;
+            spawnExtraLife(85+(extraLife * 0.5f));
             
         }
     }
 
     private void spawnObstaculo(float distObs)
     {
-        int obstaculo = Random.Range(1, 6);
+        int obstaculo = Random.Range(1, 18);
         string nome = "ob" + obstaculo.ToString();
-        GameObject obstaculoNovo = Instantiate(Resources.Load(nome) as GameObject, new Vector3(0, 0, player.transform.position.z + distObs), Quaternion.identity);
+        GameObject obstaculoNovo = Instantiate(Resources.Load(nome) as GameObject, new Vector3(0, -5, player.transform.position.z + distObs), Quaternion.identity);
+    }
+
+    private void spawnParedes(float distObs)
+    {
+        int obstaculo = Random.Range(1, 4);
+        string nome = "parede" + obstaculo.ToString();
+        obstaculo = Random.Range(1, 4);
+        Vector3 rotacaoParede = new Vector3(0,90*obstaculo,0);
+        GameObject obstaculoNovo = Instantiate(Resources.Load(nome) as GameObject, new Vector3(12.5f, -5, player.transform.position.z + distObs), Quaternion.identity);
+        obstaculoNovo.transform.eulerAngles = rotacaoParede;
+
+        GameObject obstaculoNovo2 = Instantiate(Resources.Load(nome) as GameObject, new Vector3(-12.5f, -5, player.transform.position.z + distObs), Quaternion.identity);
+        obstaculoNovo2.transform.eulerAngles = rotacaoParede;
     }
 
     private void spawnMoeda(float distObj)
@@ -109,6 +150,11 @@ public class spawnerObj : MonoBehaviour
         int moedaLane = Random.Range(-1,2);
 
         GameObject obstaculoNovo = Instantiate(Resources.Load("moeda") as GameObject, new Vector3((moedaLane*5), alturaMoedaAnt, player.transform.position.z + distObj), Quaternion.identity);
+        if (nivelMoeda >= 0)
+        {
+            obstaculoNovo.transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = coresMoeda[nivelMoeda];
+        }
+        
     }
 
     private void spawnExtraLife(float distObj)
@@ -129,7 +175,6 @@ public class spawnerObj : MonoBehaviour
 
             int extraLifeLane = Random.Range(-1,2);
             
-            //Debug.Log(moedaLane);
             GameObject obstaculoNovo = Instantiate(Resources.Load("ExtraLife") as GameObject, new Vector3((extraLifeLane*5), alturaExtraLife, player.transform.position.z + distObj), Quaternion.identity);
         }
     }
@@ -152,12 +197,11 @@ public class spawnerObj : MonoBehaviour
 
             int boostLane = Random.Range(-1,2);
             
-            //Debug.Log(moedaLane);
             GameObject obstaculoNovo = Instantiate(Resources.Load("SpeedBoost") as GameObject, new Vector3((boostLane*5), alturaBoostAnt, player.transform.position.z + distObj), Quaternion.identity);
         }
     }
 
-    public void reiniciarObstaculos()
+    private void reiniciarObstaculos()
     {
         GameObject[] obstaculosGameObjects = GameObject.FindGameObjectsWithTag("Obstaculos");
         for (int i = 0; i < obstaculosGameObjects.Length; i++)
@@ -178,6 +222,23 @@ public class spawnerObj : MonoBehaviour
     {
         posInicialPlayer = posInicial;
 
+    }
+
+    private void reiniciarParedes()
+    {
+        GameObject[] paredes = GameObject.FindGameObjectsWithTag("Paredes");
+        for (int i = 0; i < paredes.Length; i++)
+        {
+            Destroy(paredes[i]);
+        }
+
+        qtdParedes = -2;
+
+        while (qtdParedes < 8)
+        {
+            qtdParedes++;
+            spawnParedes(qtdParedes * 12);
+        }
     }
 
     public void reiniciarMoedas()
@@ -230,5 +291,14 @@ public class spawnerObj : MonoBehaviour
             speedBoosts++;
             spawnSpeedBoost((speedBoosts * 10) + 5);
         }
+    }
+
+    public void reiniciarSpawns()
+    {
+        reiniciarObstaculos();
+        reiniciarMoedas();
+        reiniciarSpeedBoosts();
+        reiniciarExtraLifes();
+        reiniciarParedes();
     }
 }

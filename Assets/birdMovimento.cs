@@ -8,8 +8,6 @@ public class birdMovimento : MonoBehaviour
     public GameObject player;
 
     public GameObject chao;
-    public GameObject parede1;
-    public GameObject parede2;
     public GameObject paredeFim;
 
     public GameObject camera;
@@ -76,7 +74,7 @@ public class birdMovimento : MonoBehaviour
             if(boosting) {
                 boostTimer += Time.deltaTime;
                 if(boostTimer >= 5){
-                    velocidade = oldSpeed + valocidade/(oldSpeed*0.8)
+                    velocidade = (float)(oldSpeed + velocidade / (oldSpeed * 0.8));
                     boosting = false;
                     boostTimer = 0;
                 }
@@ -86,8 +84,6 @@ public class birdMovimento : MonoBehaviour
             {
                 camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, player.transform.position.z - 10);
                 chao.transform.position = new Vector3(chao.transform.position.x, chao.transform.position.y, player.transform.position.z + 45);
-                parede1.transform.position = new Vector3(parede1.transform.position.x, parede1.transform.position.y, player.transform.position.z + 44);
-                parede2.transform.position = new Vector3(parede2.transform.position.x, parede2.transform.position.y, player.transform.position.z + 44);
                 paredeFim.transform.position = new Vector3(paredeFim.transform.position.x, paredeFim.transform.position.y, player.transform.position.z + 94);
             }
 
@@ -134,11 +130,13 @@ public class birdMovimento : MonoBehaviour
         if (extraLife == false)
         {
             vivo = false;
+            ptsControl.setPlayerVivo(false);
             velocidade = velocidadePosMorte;
             timer = 0;
             uiConttrollerScript.mostrarTelaFinal();
             ptsControl.salvarDados();
         } else if (extraLife == true) {
+            uiConttrollerScript.imgExtraLifeOff();
             extraLife = false;
             resetPlayer(10);
         }
@@ -168,7 +166,6 @@ public class birdMovimento : MonoBehaviour
         {
             if (vivo == false && velocidade > 0)
             {
-                // Debug.Log(velocidade);
                 velocidade -= velocidade*Time.deltaTime;
                 timer = 0;
             }
@@ -194,9 +191,9 @@ public class birdMovimento : MonoBehaviour
     }
 
     public void addExtraLife () {
-        // Debug.Log("Working");
         if(extraLife == false) {
             extraLife = true;
+            uiConttrollerScript.imgExtraLifeOn();
         }
     }
 
@@ -226,6 +223,7 @@ public class birdMovimento : MonoBehaviour
         Physics.gravity = new Vector3(0, -9.81f, 0);
         velocidade = 10;
         vivo = true;
+        ptsControl.setPlayerVivo(true);
         jogoComecou = true;
         tempoAttVelocidade = 1;
         timer = 0;
@@ -242,10 +240,7 @@ public class birdMovimento : MonoBehaviour
 
         if (primeiraVez == false)
         {
-            camera.gameObject.GetComponent<spawnerObj>().reiniciarObstaculos();
-            camera.gameObject.GetComponent<spawnerObj>().reiniciarMoedas();
-            camera.gameObject.GetComponent<spawnerObj>().reiniciarSpeedBoosts();
-            camera.gameObject.GetComponent<spawnerObj>().reiniciarExtraLifes();
+            camera.gameObject.GetComponent<spawnerObj>().reiniciarSpawns();
         }
             
     }

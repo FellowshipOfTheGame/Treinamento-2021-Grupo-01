@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class upgradeScript
 {
@@ -8,7 +9,7 @@ public class upgradeScript
     private int nivelAtual = 0;
     private string nomeUpgrade;
     private string descUpgrade;
-    private string imgUpgrade;
+    private Sprite imgUpgrade;
     private int[] precoNiveis = new int[10];
     private int multiplierPreco = 1;
 
@@ -51,12 +52,12 @@ public class upgradeScript
 
     public void setTitulo(string titulo)
     {
-        nomeUpgrade = titulo + " - Lvl " + (nivelAtual + 1).ToString();
+        nomeUpgrade = titulo;
     }
 
     public string getTitulo()
     {
-        return nomeUpgrade;
+        return nomeUpgrade + " - Lvl " + (nivelAtual + 1).ToString();
     }
 
     public void setDescUpgrade(string desc)
@@ -67,6 +68,16 @@ public class upgradeScript
     public string getDesc()
     {
         return descUpgrade;
+    }
+
+    public void setImage(string imagePath)
+    {
+        imgUpgrade = Resources.Load<Sprite>(imagePath);
+    }
+
+    public Sprite getImage()
+    {
+        return imgUpgrade;
     }
 
 }
