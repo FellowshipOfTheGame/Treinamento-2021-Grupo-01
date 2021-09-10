@@ -230,7 +230,7 @@ public class birdMovimento : MonoBehaviour
     private void setUpJogo(bool primeiraVez)
     {
 
-        Physics.gravity = new Vector3(0, -9.81f, 0);
+        Physics.gravity = new Vector3(0, -13f, 0);
         velocidade = 10;
         vivo = true;
         ptsControl.setPlayerVivo(true);

@@ -58,7 +58,7 @@ public class obstaculosScript : MonoBehaviour
             case tipoSaida.esquerda://o obstaculo vai sair pela esquerda
                 if (this.transform.position.x > -14)
                 {
-                    gameObject.transform.position = new Vector3(gameObject.transform.position.x - 0.1f, gameObject.transform.position.y, gameObject.transform.position.z);
+                    gameObject.transform.position = new Vector3(gameObject.transform.position.x - (50 * Time.deltaTime), gameObject.transform.position.y, gameObject.transform.position.z);
                 }
                 else
                 {
@@ -71,7 +71,7 @@ public class obstaculosScript : MonoBehaviour
             case tipoSaida.direita://o obstaculo vai sair pela direita
                 if (this.transform.position.x < 14)
                 {
-                    gameObject.transform.position = new Vector3(gameObject.transform.position.x + 0.1f, gameObject.transform.position.y, gameObject.transform.position.z);
+                    gameObject.transform.position = new Vector3(gameObject.transform.position.x + (50 * Time.deltaTime), gameObject.transform.position.y, gameObject.transform.position.z);
                 }
                 else
                 {
@@ -82,7 +82,7 @@ public class obstaculosScript : MonoBehaviour
             case tipoSaida.cima://o obstaculo vai sair por cima
                 if (this.transform.position.y < 40)
                 {
-                    gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 0.1f, gameObject.transform.position.z);
+                    gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + (50 * Time.deltaTime), gameObject.transform.position.z);
                 }
                 else
                 {
@@ -93,7 +93,7 @@ public class obstaculosScript : MonoBehaviour
             case tipoSaida.baixo://o obstaculo vai sair por baixo
                 if (this.transform.position.y > -7)
                 {
-                    gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 0.1f, gameObject.transform.position.z);
+                    gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - (50 * Time.deltaTime), gameObject.transform.position.z);
                 }
                 else
                 {
@@ -104,8 +104,8 @@ public class obstaculosScript : MonoBehaviour
             case tipoSaida.horizontal://o obstaculo vai sair abrindo lateralmente
                 if (object1.position.x > -14)
                 {
-                    object1.position = new Vector3(object1.position.x - 0.1f, object1.position.y, object1.position.z);
-                    object2.position = new Vector3(object2.position.x + 0.1f, object2.position.y, object2.position.z);
+                    object1.position = new Vector3(object1.position.x - (50 * Time.deltaTime), object1.position.y, object1.position.z);
+                    object2.position = new Vector3(object2.position.x + (50 * Time.deltaTime), object2.position.y, object2.position.z);
                 }
                 else
                 {
@@ -116,8 +116,8 @@ public class obstaculosScript : MonoBehaviour
             case tipoSaida.vertical://o obstaculo vai sair abrindo verticalmente
                 if (object1.position.y < -40)
                 {
-                    object1.position = new Vector3(object1.position.x, object1.position.y + 0.1f, object1.position.z);
-                    object2.position = new Vector3(object2.position.x, object2.position.y - 0.1f, object2.position.z);
+                    object1.position = new Vector3(object1.position.x, object1.position.y + (50 * Time.deltaTime), object1.position.z);
+                    object2.position = new Vector3(object2.position.x, object2.position.y - (50 * Time.deltaTime), object2.position.z);
                 }
                 else
                 {
