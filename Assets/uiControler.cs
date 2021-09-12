@@ -56,12 +56,14 @@ public class uiControler : MonoBehaviour
         {
             audio.enabled = false;
             estadoSom = false;
+            AudioListener.volume = 0;
             btn_som.image.sprite = Resources.Load<Sprite>("semSom");
         }
         else
         {
             audio.enabled = true;
             estadoSom = true;
+            AudioListener.volume = 1;
             btn_som.image.sprite = Resources.Load<Sprite>("som");
         }
             
