@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class birdMovimento : MonoBehaviour
 {
     public GameObject player;
+    private Animator playerAnimacao;
 
     public GameObject chao;
     public GameObject paredeFim;
@@ -60,7 +61,8 @@ public class birdMovimento : MonoBehaviour
         ptsControl = camera.GetComponent<pontosControlador>();
         uiConttrollerScript = camera.GetComponent<uiControler>();
         spawnerObjetos = camera.gameObject.GetComponent<spawnerObj>();
-
+        playerAnimacao = player.GetComponentInChildren<Animator>();
+        
     }
 
     // Update is called once per frame
@@ -141,6 +143,7 @@ public class birdMovimento : MonoBehaviour
             audio.Stop();
             audio.PlayOneShot(dyingSoung, 0.2f);
             spawnerObjetos.musicHandler(false);
+            playerAnimacao.enabled = false;
 
             ptsControl.setPlayerVivo(false);
             velocidade = velocidadePosMorte;
@@ -240,6 +243,7 @@ public class birdMovimento : MonoBehaviour
         tempoAttVelocidade = 1;
         timer = 0;
         ptsControl.resetQtdMoedas();
+        playerAnimacao.enabled = true;
 
         ptsControl.resetObstaculosPassados();
         camera.gameObject.GetComponent<spawnerObj>().reiniciarSpeedBoosts();

@@ -73,7 +73,7 @@ public class pontosControlador : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player == true)
+        if (playerVivo== true)
         {
             pontos = (int)((player.transform.position.z - posInicialPlayer) * multiplicadorPontos) + (obstaculosPassados * valorObstaculoPts) + (qtdMoedas * valorMoedasPontos);
             uiControllerScript.atualizarUIPontos();

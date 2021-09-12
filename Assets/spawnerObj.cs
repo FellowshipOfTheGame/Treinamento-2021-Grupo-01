@@ -185,8 +185,10 @@ public class spawnerObj : MonoBehaviour
                 alturaExtraLife = 5;
 
             int extraLifeLane = Random.Range(-1,2);
-            
+
+            Vector3 rotacaoExtraLife = new Vector3(-90, 0, 0);
             GameObject obstaculoNovo = Instantiate(Resources.Load("ExtraLife") as GameObject, new Vector3((extraLifeLane*5), alturaExtraLife, player.transform.position.z + distObj), Quaternion.identity);
+            obstaculoNovo.transform.eulerAngles = rotacaoExtraLife;
         }
     }
 
@@ -207,8 +209,10 @@ public class spawnerObj : MonoBehaviour
                 alturaBoostAnt = 5;
 
             int boostLane = Random.Range(-1,2);
-            
+
+            Vector3 rotacaoSpeedBoost = new Vector3(-90, 0, 0);
             GameObject obstaculoNovo = Instantiate(Resources.Load("SpeedBoost") as GameObject, new Vector3((boostLane*5), alturaBoostAnt, player.transform.position.z + distObj), Quaternion.identity);
+            obstaculoNovo.transform.eulerAngles = rotacaoSpeedBoost;
         }
     }
 

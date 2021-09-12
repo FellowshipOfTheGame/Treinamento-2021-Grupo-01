@@ -18,7 +18,10 @@ public class uiControler : MonoBehaviour
     private Text moedasText;
     public Button btn_play;
     public Image imgExtraLife;
-    
+    public Button btn_som;
+    private AudioListener audio;
+    private bool estadoSom;
+
     //ui da loja
     public Button btn_abrirLoja;
     public Image img_backgroundLoja;
@@ -42,6 +45,26 @@ public class uiControler : MonoBehaviour
 
         pontosController = gameObject.GetComponent<pontosControlador>();
         lojaScript = gameObject.GetComponent<lojaScript>();
+
+        audio = gameObject.GetComponent<AudioListener>();
+        estadoSom = true;
+    }
+
+    public void switchSom()
+    {
+        if (estadoSom == true)
+        {
+            audio.enabled = false;
+            estadoSom = false;
+            btn_som.image.sprite = Resources.Load<Sprite>("semSom");
+        }
+        else
+        {
+            audio.enabled = true;
+            estadoSom = true;
+            btn_som.image.sprite = Resources.Load<Sprite>("som");
+        }
+            
     }
 
     // Update is called once per frame
@@ -52,6 +75,7 @@ public class uiControler : MonoBehaviour
 
     public void mostrarTelaFinal()
     {
+        btn_som.gameObject.SetActive(true);
         btn_highscore.gameObject.SetActive(true);
         scoreText.text = "Total Pontos : " + pontosController.getPontos().ToString();
         btn_play.gameObject.SetActive(true);
@@ -87,6 +111,7 @@ public class uiControler : MonoBehaviour
         btn_play.gameObject.SetActive(false);
         morreuTextGameObject.gameObject.SetActive(false);
         btn_abrirLoja.gameObject.SetActive(false);
+        btn_som.gameObject.SetActive(false);
     }
 
     public void abrirLoja()
@@ -94,6 +119,7 @@ public class uiControler : MonoBehaviour
         img_backgroundLoja.gameObject.SetActive(true);
         qtdMoedasLoja.text = pontosController.getMoedasBolso().ToString();
         btn_highscore.gameObject.SetActive(false);
+        btn_som.gameObject.SetActive(false);
         lojaScript.lojaAberta();
 
     }
@@ -107,6 +133,7 @@ public class uiControler : MonoBehaviour
     {
         img_backgroundLoja.gameObject.SetActive(false);
         btn_highscore.gameObject.SetActive(true);
+        btn_som.gameObject.SetActive(true);
     }
 
     public void loadRecordes(int topRun, int qtdMoedas, int qtdDist, int qtdObst, int qtdJogos)
@@ -120,6 +147,7 @@ public class uiControler : MonoBehaviour
 
     public void abrirRecordes()
     {
+        btn_som.gameObject.SetActive(false);
         panelRecordes.SetActive(true);
         btn_abrirLoja.gameObject.SetActive(false);
         btn_highscore.gameObject.SetActive(false);
@@ -129,6 +157,7 @@ public class uiControler : MonoBehaviour
 
     public void fecharRecordes()
     {
+        btn_som.gameObject.SetActive(true);
         panelRecordes.SetActive(false);
         btn_abrirLoja.gameObject.SetActive(true);
         btn_highscore.gameObject.SetActive(true);
