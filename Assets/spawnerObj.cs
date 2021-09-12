@@ -11,6 +11,8 @@ public class spawnerObj : MonoBehaviour
 
     private int posInicialPlayer = 0;
 
+    private AudioSource audio;
+
     //mudanca da probabilidade do spawn dos boosts
     int spawnRate;
     int maxSpawnRate = 11;
@@ -46,6 +48,7 @@ public class spawnerObj : MonoBehaviour
         objs = GameObject.FindGameObjectsWithTag("Player");
         player = objs[0];
         playerScript = player.GetComponent<birdMovimento>();
+        audio = GetComponent<AudioSource>();
 
         while (player.transform.position.z - posInicialPlayer - (obstaculos * 10) > -80)
         {
@@ -75,6 +78,14 @@ public class spawnerObj : MonoBehaviour
     public void setNivelMoeda(int nivel)
     {
         nivelMoeda = nivel;
+    }
+
+    public void musicHandler(bool state){
+        if(state == true){
+            audio.Play();
+        } else if (state == false){
+            audio.Stop();
+        }
     }
 
     // Update is called once per frame

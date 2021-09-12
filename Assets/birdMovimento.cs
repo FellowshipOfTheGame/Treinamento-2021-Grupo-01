@@ -140,6 +140,8 @@ public class birdMovimento : MonoBehaviour
             vivo = false;
             audio.Stop();
             audio.PlayOneShot(dyingSoung, 0.2f);
+            spawnerObjetos.musicHandler(false);
+
             ptsControl.setPlayerVivo(false);
             velocidade = velocidadePosMorte;
             timer = 0;
@@ -247,6 +249,7 @@ public class birdMovimento : MonoBehaviour
 
         ptsControl.setPosInicial(gameObject.transform.position.z);
         spawnerObjetos.setPosInicialPlayer(ptsControl.getPosInicial());
+        spawnerObjetos.musicHandler(true);
 
         if (primeiraVez == false)
         {
